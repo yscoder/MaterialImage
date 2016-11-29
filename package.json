@@ -1,0 +1,21 @@
+{
+  "name": "material-image",
+  "version": "0.0.1",
+  "description": "Generate random material design background.",
+  "main": "dist/index.js",
+  "keywords": [
+    "material",
+    "design",
+    "background",
+    "random",
+    "image"
+  ],
+  "author": "yusen",
+  "license": "MIT",
+  "devDependencies": {
+    "browser-sync": "^2.18.2",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-uglify": "^2.0.0"
+  }
+}
