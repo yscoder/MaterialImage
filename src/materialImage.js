@@ -31,24 +31,37 @@
         }
 
         this.rect = function (option) {
-            ctx.beginPath()
-            ctx.rotate(random(10, 360) * Math.PI / 180)
-            // ctx.scale(random(0, 5), random(0, 5))
-            this.shadow({
-                blur: 20
-            })
-            ctx.fillStyle = option.color
-            ctx.fillRect(option.x, option.y, option.width, option.height)
+            var r = random(10, 360) * Math.PI / 180
+            var w = random(100, Math.max(option.width, option.height)) * (random(-10, 10) || 1)
+            var h = random(100, Math.min(option.width, option.height)) * (random(-10, 10) || 1)
+            console.log(r)
+            ctx.rotate(r)
+            ctx.rect(0, 0, w, h)
+            ctx.rotate(-r)
         }
 
         this.arc = function (option) {
+            var r = random(100, Math.min(option.width, option.height) / 2)
+            console.log(r)
+            ctx.arc(0, 0, r, 0, 2 * Math.PI)
+        }
+
+        this.draw = function (sharp, option) {
             ctx.beginPath()
             this.shadow({
                 blur: 20
             })
-            ctx.arc(option.x, option.y, option.r, 0, 2 * Math.PI)
+
+            var x = random(0, option.width)
+            var y = random(0, option.height)
+            console.log(x, y)
+            ctx.translate(x, y)
+            this[sharp](option)
+            ctx.closePath()
             ctx.fillStyle = option.color
             ctx.fill()
+            console.log(-x, -y)
+            ctx.translate(-x, -y)
         }
 
         this.fill = function (color, width, height) {
@@ -85,7 +98,7 @@
         return ['rect', 'arc'][random(0, 1)]
     }
 
-    function generate(element) {
+    function generate(element, debug) {
         var count = random(0, 10) + 6
         var colors = getColors(count)
         var width = element.clientWidth;
@@ -94,33 +107,25 @@
         var drawer = new Drawer(canvas)
         console.log(colors)
         drawer.fill(colors[0], width, height)
-        for (var i = 1; i <= count; i++) {
-            var shape = getShape()
-            var x = random(0, width)
-            var y = random(0, height)
-            var c = colors[i]
-            if (shape === 'arc') {
-                var arg = {
-                    x: x,
-                    y: y,
-                    r: random(100, Math.min(width, height) / 2),
-                    color: c
-                }
-                drawer.arc(arg)
-                console.log(arg)
-            } else if (shape === 'rect') {
-                var arg = {
-                    x: x,
-                    y: y,
-                    width: random(100, Math.min(width, height)),
-                    height: random(100, Math.min(width, height)),
-                    color: c
-                }
-                drawer.rect(arg)
-                console.log(arg)
+        if (!debug) {
+            for (var i = 1; i <= count; i++) {
+                drawer.draw(getShape(), {
+                    color: colors[i++],
+                    width: width,
+                    height: height
+                })
             }
+        } else {
+            var i = 1
+            setTimeout(function () {
+                drawer.draw(getShape(), {
+                    color: colors[i++],
+                    width: width,
+                    height: height
+                })
+                i <= count && setTimeout(arguments.callee, 1000)
+            }, 1000)
         }
-
 
         element.appendChild(canvas)
     }
