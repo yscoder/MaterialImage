@@ -160,7 +160,7 @@ export default class MaterialImage {
         this.element.style.cssText += `
             background-image: url("${dataUrl}");
             background-repeat: no-repeat;
-            background-size: 100% 100%;`;
+            background-size: cover;`;
         break;
       case 'image':
         const img = document.createElement('img');
