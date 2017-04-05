@@ -8,7 +8,7 @@ const eslint = require('gulp-eslint');
 const src = './src/';
 const dist = './dist/';
 
-gulp.task('build', () => gulp.src(`${src}index.js`)
+const buildEs5 = () => gulp.src(`${src}index.js`)
         .pipe(rename('MaterialImage.js'))
         .pipe(babel({
           presets: ['es2015'],
@@ -21,12 +21,16 @@ gulp.task('build', () => gulp.src(`${src}index.js`)
           ],
         }))
         .pipe(rename('materialImage.es5.js'))
-        .pipe(gulp.dest('dist'))
+        .pipe(gulp.dest('dist'));
+
+gulp.task('build', () => buildEs5()
         .pipe(uglify({
           preserveComments: 'license',
         }))
         .pipe(rename('materialImage.min.js'))
         .pipe(gulp.dest(dist)));
+
+gulp.task('es5', () => buildEs5());
 
 gulp.task('dev', () => {
   browserSync.init({
@@ -35,7 +39,8 @@ gulp.task('dev', () => {
     },
   });
 
-  gulp.watch(['index.html', `${src}*.*`], browserSync.reload);
+  gulp.watch('index.html', browserSync.reload);
+  gulp.watch(`${src}*.*`, ['es5']).on('change', browserSync.reload);
 });
 
 gulp.task('lint', () => gulp.src(`${src}index.js`)

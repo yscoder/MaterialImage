@@ -100,8 +100,9 @@ export default class MaterialImage {
     this.element = el;
     this.width = width;
     this.height = height;
+    this.outputType = output;
     this.protract();
-    this.render(output, {
+    this.render({
       imageType,
       quality
     });
@@ -150,9 +151,9 @@ export default class MaterialImage {
     return this.canvas.toDataURL(`image/${imageType}`, quality);
   }
 
-  render(output, { imageType, quality }) {
+  render({ imageType, quality }) {
     const dataUrl = this.toDataUrl(imageType, quality);
-    switch(output) {
+    switch(this.outputType) {
       case 'canvas':
         this.element.appendChild(this.canvas);
         break;
@@ -164,6 +165,7 @@ export default class MaterialImage {
         break;
       case 'image':
         const img = document.createElement('img');
+        img.className = 'material-image-hook';
         img.style.cssText = 'width: 100%; height: 100%';
         img.src = dataUrl;
         this.element.appendChild(img);
@@ -172,7 +174,18 @@ export default class MaterialImage {
   }
 
   destroy() {
-    this.element.removeChild(this.canvas);
+    switch(this.outputType) {
+      case 'canvas':
+        this.element.removeChild(this.canvas);
+        break;
+      case 'background':
+        const cssText = this.element.style.cssText;
+        this.element.style.cssText = cssText.replace(/background[^;]+;/g, '');
+        break;
+      case 'image':
+        this.element.querySelector('.material-image-hook').remove();
+        break;
+    }
   }
 }
 
