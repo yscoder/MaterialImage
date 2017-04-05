@@ -1,11 +1,15 @@
 # MaterialImage
 Working!
 
+```bash
+$ npm i material-image -S
+```
+
 ## 使用方法
 
 ### ES6 Module:
 ``` javascript
-import MaterialImage from 'material-image'; // 尚未发布至npm
+import MaterialImage from 'material-image';
 
 const myDom = document.querySelector('.my-dom');
 new MaterialImage({
@@ -27,6 +31,9 @@ new MaterialImage({
 | ------------- |:-------------:|:-------:| :------------------:|
 | el            | Element       | body    | 插入canvas的DOM节点 |
 | debug         | Boolean       | false   | 调试模式开关        |
+| output        | String        | background | 三种输出模式，可选值：`background`、`image`、`canvas` |
+| imageType     | String       | jpeg   | 输出为图片时（`background`、`image`）的图片类型   |
+| quality       | Number       | 1      | 输出为图片时（`background`、`image`）的图片质量，取值 `0~1` 之间 |
 
 ### Methods:
 | 名称           | 描述           |
@@ -34,6 +41,7 @@ new MaterialImage({
 | protract      | 重新绘制canvas  |
 | adjust        | 调整canvas尺寸  |
 | destroy       | 移除canvas节点  |
+| toDataUrl     | 生成 base64Url，参数 `(imageType, quality)` |
 
 ## 生成策略
 
