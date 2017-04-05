@@ -182,8 +182,9 @@
       this.element = el;
       this.width = width;
       this.height = height;
+      this.outputType = output;
       this.protract();
-      this.render(output, {
+      this.render({
         imageType: imageType,
         quality: quality
       });
@@ -242,12 +243,12 @@
       }
     }, {
       key: 'render',
-      value: function render(output, _ref4) {
+      value: function render(_ref4) {
         var imageType = _ref4.imageType,
             quality = _ref4.quality;
 
         var dataUrl = this.toDataUrl(imageType, quality);
-        switch (output) {
+        switch (this.outputType) {
           case 'canvas':
             this.element.appendChild(this.canvas);
             break;
@@ -256,6 +257,7 @@
             break;
           case 'image':
             var img = document.createElement('img');
+            img.className = 'material-image-hook';
             img.style.cssText = 'width: 100%; height: 100%';
             img.src = dataUrl;
             this.element.appendChild(img);
@@ -265,7 +267,18 @@
     }, {
       key: 'destroy',
       value: function destroy() {
-        this.element.removeChild(this.canvas);
+        switch (this.outputType) {
+          case 'canvas':
+            this.element.removeChild(this.canvas);
+            break;
+          case 'background':
+            var cssText = this.element.style.cssText;
+            this.element.style.cssText = cssText.replace(/background[^;]+;/g, '');
+            break;
+          case 'image':
+            this.element.querySelector('.material-image-hook').remove();
+            break;
+        }
       }
     }]);
 

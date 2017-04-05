@@ -19,10 +19,13 @@ new MaterialImage({
 
 ### Script:
 ``` html
-<script src="materialImage.min.js"></script>
+<!-- Use cdn -->
+<script src="//unpkg.com/material-image/dist/materialImage.min.js"></script>
 <script>
     var body = document.querySelector('body');
-    new MaterialImage();
+    new MaterialImage({
+      el: body
+    });
 </script>
 ```
 
