@@ -24,11 +24,11 @@ const getColors = count => {
   return colors;
 };
 
-const createElementBySize = (tag, width, height) => {
-  const el = document.createElement(tag);
-  el.width = width;
-  el.height = height;
-  return el;
+const createCanvas = (width, height) => {
+  const canvas = document.createElement('canvas');
+  canvas.width = width;
+  canvas.height = height;
+  return canvas;
 };
 
 const getShape = () => ['rect', 'arc'][random(0, 1)];
@@ -96,7 +96,7 @@ export default class MaterialImage {
     const height = el.clientHeight;
 
     this.debug = debug;
-    this.canvas = createElementBySize('canvas', width, height);
+    this.canvas = createCanvas(width, height);
     this.element = el;
     this.width = width;
     this.height = height;
@@ -157,10 +157,15 @@ export default class MaterialImage {
         this.element.appendChild(this.canvas);
         break;
       case 'background':
-        this.element.style.cssText += `background-image: url("${dataUrl}"); background-size: cover;`;
+        this.element.style.cssText += `
+            background-image: url("${dataUrl}");
+            background-repeat: no-repeat;
+            background-size: 100% 100%;`;
         break;
       case 'image':
-        const img = createElementBySize('img', this.width, this.height);
+        const img = document.createElement('img');
+        img.style.cssText = 'width: 100%; height: 100%';
+        img.src = dataUrl;
         this.element.appendChild(img);
         break;
     }

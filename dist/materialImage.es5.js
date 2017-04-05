@@ -69,11 +69,11 @@
     return colors;
   };
 
-  var createElementBySize = function createElementBySize(tag, width, height) {
-    var el = document.createElement(tag);
-    el.width = width;
-    el.height = height;
-    return el;
+  var createCanvas = function createCanvas(width, height) {
+    var canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    return canvas;
   };
 
   var getShape = function getShape() {
@@ -178,7 +178,7 @@
       var height = el.clientHeight;
 
       this.debug = debug;
-      this.canvas = createElementBySize('canvas', width, height);
+      this.canvas = createCanvas(width, height);
       this.element = el;
       this.width = width;
       this.height = height;
@@ -252,10 +252,12 @@
             this.element.appendChild(this.canvas);
             break;
           case 'background':
-            this.element.style.cssText += 'background-image: url("' + dataUrl + '"); background-size: cover;';
+            this.element.style.cssText += '\n            background-image: url("' + dataUrl + '");\n            background-repeat: no-repeat;\n            background-size: 100% 100%;';
             break;
           case 'image':
-            var img = createElementBySize('img', this.width, this.height);
+            var img = document.createElement('img');
+            img.style.cssText = 'width: 100%; height: 100%';
+            img.src = dataUrl;
             this.element.appendChild(img);
             break;
         }
