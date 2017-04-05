@@ -7,8 +7,10 @@ Working!
 ``` javascript
 import MaterialImage from 'material-image'; // 尚未发布至npm
 
-const body = document.querySelector('body');
-MaterialImage(body);
+const myDom = document.querySelector('.my-dom');
+new MaterialImage({
+  el: myDom,
+});
 ```
 
 ### Script:
@@ -16,9 +18,22 @@ MaterialImage(body);
 <script src="materialImage.min.js"></script>
 <script>
     var body = document.querySelector('body');
-    MaterialImage(body);
+    new MaterialImage();
 </script>
 ```
+
+### Configs:
+| 参数           | 类型          | 默认值   | 描述               |
+| ------------- |:-------------:|:-------:| :------------------:|
+| el            | Element       | body    | 插入canvas的DOM节点 |
+| debug         | Boolean       | false   | 调试模式开关        |
+
+### Methods:
+| 名称           | 描述           |
+| ------------- |:--------------:|
+| protract      | 重新绘制canvas  |
+| adjust        | 调整canvas尺寸  |
+| destroy       | 移除canvas节点  |
 
 ## 生成策略
 

@@ -98,17 +98,18 @@
         return ['rect', 'arc'][random(0, 1)];
     }
 
-    function generate(element, debug) {
+    MaterialImage.prototype.protract = function () {
         var _arguments = arguments;
 
         var count = random(0, 10) + 6;
         var colors = getColors(count);
+        var drawer = new Drawer(this.canvas);
+        var element = this.element;
         var width = element.clientWidth;
         var height = element.clientHeight;
-        var canvas = createCanvas(width, height);
-        var drawer = new Drawer(canvas);
+
         drawer.fill(colors[0], width, height);
-        if (!debug) {
+        if (!this.debug) {
             for (var i = 1; i <= count; i++) {
                 drawer.draw(getShape(), {
                     color: colors[i++],
@@ -127,9 +128,35 @@
                 _i <= count && setTimeout(_arguments.callee, 1000);
             }, 1000);
         }
+    };
 
-        element.appendChild(canvas);
+    MaterialImage.prototype.adjust = function () {
+        var canvas = this.canvas;
+        var element = this.element;
+
+        canvas.width = element.clientWidth;
+        canvas.height = element.clientHeight;
+    };
+
+    MaterialImage.prototype.destroy = function () {
+        this.element.removeChild(this.canvas);
+    };
+
+    function MaterialImage() {
+        var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+        var el = config.el,
+            debug = config.debug;
+
+        var element = this.element = el || document.querySelector('body');
+        var width = element.clientWidth;
+        var height = element.clientHeight;
+
+        this.debug = debug;
+        this.canvas = createCanvas(width, height);
+        this.protract(debug);
+
+        element.appendChild(this.canvas);
     }
 
-    module.exports = generate;
+    module.exports = MaterialImage;
 });

@@ -86,15 +86,16 @@ function getShape() {
     return ['rect', 'arc'][random(0, 1)]
 }
 
-function generate(element, debug) {
+MaterialImage.prototype.protract = function () {
     const count = random(0, 10) + 6
     const colors = getColors(count)
-    const width = element.clientWidth;
-    const height = element.clientHeight;
-    const canvas = createCanvas(width, height)
-    const drawer = new Drawer(canvas)
+    const drawer = new Drawer(this.canvas)
+    const element = this.element
+    const width = element.clientWidth
+    const height = element.clientHeight
+
     drawer.fill(colors[0], width, height)
-    if (!debug) {
+    if (!this.debug) {
         for (let i = 1; i <= count; i++) {
             drawer.draw(getShape(), {
                 color: colors[i++],
@@ -113,8 +114,31 @@ function generate(element, debug) {
             i <= count && setTimeout(arguments.callee, 1000)
         }, 1000)
     }
-
-    element.appendChild(canvas)
 }
 
-module.exports = generate
+MaterialImage.prototype.adjust = function () {
+  const canvas = this.canvas
+  const element = this.element
+
+  canvas.width = element.clientWidth
+  canvas.height = element.clientHeight
+}
+
+MaterialImage.prototype.destroy = function () {
+  this.element.removeChild(this.canvas);
+}
+
+function MaterialImage(config = {}) {
+  const { el, debug } = config
+  const element = this.element = el || document.querySelector('body')
+  const width = element.clientWidth
+  const height = element.clientHeight
+
+  this.debug = debug
+  this.canvas = createCanvas(width, height)
+  this.protract(debug)
+
+  element.appendChild(this.canvas)
+}
+
+module.exports = MaterialImage
