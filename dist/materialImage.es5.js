@@ -152,6 +152,8 @@
 
     canvas.width = element.clientWidth;
     canvas.height = element.clientHeight;
+
+    this.protract();
   };
 
   MaterialImage.prototype.destroy = function destroy() {
