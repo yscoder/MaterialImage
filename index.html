@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>MaterialImage</title>
     <style>
         body {
             margin: 0
@@ -22,7 +22,9 @@
     <script src="dist/materialImage.es5.js"></script>
     <script>
         var body = document.querySelector('body')
-        new MaterialImage();
+        new MaterialImage({
+          el: body
+        })
     </script>
 </body>
 </html>
