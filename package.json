@@ -1,6 +1,6 @@
 {
   "name": "material-image",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "description": "Generate random material design background image.",
   "main": "dist/materialImage.min.js",
   "keywords": [

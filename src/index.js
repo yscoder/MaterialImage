@@ -83,7 +83,7 @@ class Drawer {
   }
 }
 
-export default class MaterialImage {
+class MaterialImage {
   constructor(config = {}) {
     const {
         el = document.querySelector('body'),
@@ -96,16 +96,17 @@ export default class MaterialImage {
     const height = el.clientHeight;
 
     this.debug = debug;
-    this.canvas = createCanvas(width, height);
     this.element = el;
     this.width = width;
     this.height = height;
     this.outputType = output;
-    this.protract();
-    this.render({
+    this.outputOption = {
       imageType,
-      quality
-    });
+      quality,
+    };
+    this.canvas = createCanvas(width, height);
+    this.render();
+    this.protract();
   }
 
   protract() {
@@ -135,6 +136,20 @@ export default class MaterialImage {
         if (i <= count) setTimeout(this.protract, 1000);
       }, 1000);
     }
+
+    if (this.outputType === 'canvas') return;
+
+    const dataUrl = this.toDataUrl(this.outputOption);
+    switch (this.outputType) {
+      case 'background':
+        this.element.style.backgroundImage = `url("${dataUrl}")`;
+        break;
+      case 'image':
+        this.img.src = dataUrl;
+        break;
+      default:
+        break;
+    }
   }
 
   adjust() {
@@ -151,39 +166,40 @@ export default class MaterialImage {
     return this.canvas.toDataURL(`image/${imageType}`, quality);
   }
 
-  render({ imageType, quality }) {
-    const dataUrl = this.toDataUrl(imageType, quality);
-    switch(this.outputType) {
+  render() {
+    switch (this.outputType) {
       case 'canvas':
         this.element.appendChild(this.canvas);
         break;
       case 'background':
         this.element.style.cssText += `
-            background-image: url("${dataUrl}");
             background-repeat: no-repeat;
             background-size: cover;`;
         break;
       case 'image':
-        const img = document.createElement('img');
-        img.className = 'material-image-hook';
-        img.style.cssText = 'width: 100%; height: 100%';
-        img.src = dataUrl;
-        this.element.appendChild(img);
+        this.img = document.createElement('img');
+        this.img.style.cssText = 'width: 100%; height: 100%';
+        this.element.appendChild(this.img);
+        break;
+      default:
         break;
     }
   }
 
   destroy() {
-    switch(this.outputType) {
+    switch (this.outputType) {
       case 'canvas':
         this.element.removeChild(this.canvas);
         break;
-      case 'background':
+      case 'background': {
         const cssText = this.element.style.cssText;
         this.element.style.cssText = cssText.replace(/background[^;]+;/g, '');
         break;
+      }
       case 'image':
         this.element.querySelector('.material-image-hook').remove();
+        break;
+      default:
         break;
     }
   }

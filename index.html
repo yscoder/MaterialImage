@@ -22,10 +22,16 @@
     <script src="dist/materialImage.es5.js"></script>
     <script>
         var body = document.querySelector('body')
-        new MaterialImage({
+        var materialBg = new MaterialImage({
           el: body,
           // output: 'image'
         })
+        window.addEventListener('resize', () => {
+          materialBg.adjust();
+        }, false);
+        document.addEventListener('click', () => {
+          materialBg.protract();
+        }, false);
     </script>
 </body>
 </html>

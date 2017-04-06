@@ -1,21 +1,17 @@
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(['module', 'exports'], factory);
+    define(['module'], factory);
   } else if (typeof exports !== "undefined") {
-    factory(module, exports);
+    factory(module);
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod, mod.exports);
+    factory(mod);
     global.MaterialImage = mod.exports;
   }
-})(this, function (module, exports) {
+})(this, function (module) {
   'use strict';
-
-  Object.defineProperty(exports, "__esModule", {
-    value: true
-  });
 
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
@@ -178,16 +174,17 @@
       var height = el.clientHeight;
 
       this.debug = debug;
-      this.canvas = createCanvas(width, height);
       this.element = el;
       this.width = width;
       this.height = height;
       this.outputType = output;
-      this.protract();
-      this.render({
+      this.outputOption = {
         imageType: imageType,
         quality: quality
-      });
+      };
+      this.canvas = createCanvas(width, height);
+      this.render();
+      this.protract();
     }
 
     _createClass(MaterialImage, [{
@@ -221,6 +218,20 @@
             if (_i <= count) setTimeout(_this.protract, 1000);
           }, 1000);
         }
+
+        if (this.outputType === 'canvas') return;
+
+        var dataUrl = this.toDataUrl(this.outputOption);
+        switch (this.outputType) {
+          case 'background':
+            this.element.style.backgroundImage = 'url("' + dataUrl + '")';
+            break;
+          case 'image':
+            this.img.src = dataUrl;
+            break;
+          default:
+            break;
+        }
       }
     }, {
       key: 'adjust',
@@ -243,24 +254,20 @@
       }
     }, {
       key: 'render',
-      value: function render(_ref4) {
-        var imageType = _ref4.imageType,
-            quality = _ref4.quality;
-
-        var dataUrl = this.toDataUrl(imageType, quality);
+      value: function render() {
         switch (this.outputType) {
           case 'canvas':
             this.element.appendChild(this.canvas);
             break;
           case 'background':
-            this.element.style.cssText += '\n            background-image: url("' + dataUrl + '");\n            background-repeat: no-repeat;\n            background-size: 100% 100%;';
+            this.element.style.cssText += '\n            background-repeat: no-repeat;\n            background-size: cover;';
             break;
           case 'image':
-            var img = document.createElement('img');
-            img.className = 'material-image-hook';
-            img.style.cssText = 'width: 100%; height: 100%';
-            img.src = dataUrl;
-            this.element.appendChild(img);
+            this.img = document.createElement('img');
+            this.img.style.cssText = 'width: 100%; height: 100%';
+            this.element.appendChild(this.img);
+            break;
+          default:
             break;
         }
       }
@@ -272,11 +279,15 @@
             this.element.removeChild(this.canvas);
             break;
           case 'background':
-            var cssText = this.element.style.cssText;
-            this.element.style.cssText = cssText.replace(/background[^;]+;/g, '');
-            break;
+            {
+              var cssText = this.element.style.cssText;
+              this.element.style.cssText = cssText.replace(/background[^;]+;/g, '');
+              break;
+            }
           case 'image':
             this.element.querySelector('.material-image-hook').remove();
+            break;
+          default:
             break;
         }
       }
@@ -284,9 +295,6 @@
 
     return MaterialImage;
   }();
-
-  exports.default = MaterialImage;
-
 
   module.exports = MaterialImage;
 });
