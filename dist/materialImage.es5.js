@@ -13,6 +13,10 @@
 })(this, function (module) {
   'use strict';
 
+  function _toArray(arr) {
+    return Array.isArray(arr) ? arr : Array.from(arr);
+  }
+
   function _classCallCheck(instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
@@ -188,37 +192,8 @@
     }
 
     _createClass(MaterialImage, [{
-      key: 'protract',
-      value: function protract() {
-        var _this = this;
-
-        var count = random(0, 10) + 6;
-        var colors = getColors(count);
-        var drawer = new Drawer(this.canvas);
-        var width = this.width;
-        var height = this.height;
-
-        drawer.fill(colors[0], width, height);
-        if (!this.debug) {
-          for (var i = 1; i <= count; i += 1) {
-            drawer.draw(getShape(), {
-              color: colors[i += 1],
-              width: width,
-              height: height
-            });
-          }
-        } else {
-          var _i = 1;
-          setTimeout(function () {
-            drawer.draw(getShape(), {
-              color: colors[_i += 1],
-              width: width,
-              height: height
-            });
-            if (_i <= count) setTimeout(_this.protract, 1000);
-          }, 1000);
-        }
-
+      key: 'output',
+      value: function output() {
         if (this.outputType === 'canvas') return;
 
         var dataUrl = this.toDataUrl(this.outputOption);
@@ -231,6 +206,51 @@
             break;
           default:
             break;
+        }
+      }
+    }, {
+      key: 'protract',
+      value: function protract() {
+        var _this = this;
+
+        var count = random(0, 8) + 6;
+
+        var _getColors = getColors(count),
+            _getColors2 = _toArray(_getColors),
+            background = _getColors2[0],
+            colors = _getColors2.slice(1);
+
+        var drawer = new Drawer(this.canvas);
+        var width = this.width;
+        var height = this.height;
+
+        drawer.fill(background, width, height);
+
+        var i = 0;
+        if (!this.debug) {
+          while (i < count) {
+            drawer.draw(getShape(), {
+              color: colors[i],
+              width: width,
+              height: height
+            });
+            i += 1;
+          }
+          this.output();
+        } else {
+          var debugDraw = function debugDraw() {
+            drawer.draw(getShape(), {
+              color: colors[i],
+              width: width,
+              height: height
+            });
+            _this.output();
+            i += 1;
+            if (i < count) {
+              setTimeout(debugDraw, 1000);
+            }
+          };
+          setTimeout(debugDraw, 1000);
         }
       }
     }, {
@@ -276,7 +296,7 @@
       value: function destroy() {
         switch (this.outputType) {
           case 'canvas':
-            this.element.removeChild(this.canvas);
+            this.canvas.remove();
             break;
           case 'background':
             {
@@ -285,7 +305,7 @@
               break;
             }
           case 'image':
-            this.element.querySelector('.material-image-hook').remove();
+            this.img.remove();
             break;
           default:
             break;

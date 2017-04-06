@@ -86,11 +86,11 @@ class Drawer {
 class MaterialImage {
   constructor(config = {}) {
     const {
-        el = document.querySelector('body'),
-        debug = false,
-        output = 'background',
-        imageType,
-        quality } = config;
+      el = document.querySelector('body'),
+      debug = false,
+      output = 'background',
+      imageType,
+      quality } = config;
 
     const width = el.clientWidth;
     const height = el.clientHeight;
@@ -109,34 +109,7 @@ class MaterialImage {
     this.protract();
   }
 
-  protract() {
-    const count = random(0, 10) + 6;
-    const colors = getColors(count);
-    const drawer = new Drawer(this.canvas);
-    const width = this.width;
-    const height = this.height;
-
-    drawer.fill(colors[0], width, height);
-    if (!this.debug) {
-      for (let i = 1; i <= count; i += 1) {
-        drawer.draw(getShape(), {
-          color: colors[i += 1],
-          width,
-          height,
-        });
-      }
-    } else {
-      let i = 1;
-      setTimeout(() => {
-        drawer.draw(getShape(), {
-          color: colors[i += 1],
-          width,
-          height,
-        });
-        if (i <= count) setTimeout(this.protract, 1000);
-      }, 1000);
-    }
-
+  output() {
     if (this.outputType === 'canvas') return;
 
     const dataUrl = this.toDataUrl(this.outputOption);
@@ -149,6 +122,43 @@ class MaterialImage {
         break;
       default:
         break;
+    }
+  }
+
+  protract() {
+    const count = random(0, 8) + 6;
+    const [background, ...colors] = getColors(count);
+    const drawer = new Drawer(this.canvas);
+    const width = this.width;
+    const height = this.height;
+
+    drawer.fill(background, width, height);
+
+    let i = 0;
+    if (!this.debug) {
+      while (i < count) {
+        drawer.draw(getShape(), {
+          color: colors[i],
+          width,
+          height,
+        });
+        i += 1;
+      }
+      this.output();
+    } else {
+      const debugDraw = () => {
+        drawer.draw(getShape(), {
+          color: colors[i],
+          width,
+          height,
+        });
+        this.output();
+        i += 1;
+        if (i < count) {
+          setTimeout(debugDraw, 1000);
+        }
+      };
+      setTimeout(debugDraw, 1000);
     }
   }
 
@@ -189,7 +199,7 @@ class MaterialImage {
   destroy() {
     switch (this.outputType) {
       case 'canvas':
-        this.element.removeChild(this.canvas);
+        this.canvas.remove();
         break;
       case 'background': {
         const cssText = this.element.style.cssText;
@@ -197,7 +207,7 @@ class MaterialImage {
         break;
       }
       case 'image':
-        this.element.querySelector('.material-image-hook').remove();
+        this.img.remove();
         break;
       default:
         break;
